@@ -11,12 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Create .env
+        env:
+          PORT: ${{ secrets.PORT }}
+          WEBSITENAME: ${{ secrets.WEBSITENAME }}
+          DBNAME: ${{ secrets.DBNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: |
             touch .env
-            echo PORT=${{ secrets.PORT }} > .env
-            echo WEBSITENAME=${{ secrets.WEBSITENAME }} > .env
-            echo DBNAME=${{ secrets.DBNAME }} > .env
-            echo PASSWORD=${{ secrets.PASSWORD }} > .env
+            echo PORT=${{ secrets.PORT }} >> .env
+            echo WEBSITENAME=${{ secrets.WEBSITENAME }} >> .env
+            echo DBNAME=${{ secrets.DBNAME }} >> .env
+            echo PASSWORD=${{ secrets.PASSWORD }} >> .env
             cat .env
 
       - name: Run build
