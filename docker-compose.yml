@@ -37,12 +37,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       # all of this depends on what we version control:
-      - ../:/var/www/html
+      - ./bonsai-wp/:/var/www/html
       #- ./${WEBSITENAME}-wptheme/wp-content/themes:/var/www/html/wp-content/themes
       #- ./${WEBSITENAME}-wptheme/wp-content/plugins:/var/www/html/wp-content/plugins
       #- ./${WEBSITENAME}-wptheme/wp-content/uploads:/var/www/html/wp-content/uploads
     ports:
-      - "${PORT:-8000}:80"
+      - "${PORT:-8080}:80"
     depends_on:
       - db
     environment:
