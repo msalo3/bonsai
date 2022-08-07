@@ -1,0 +1,54 @@
+version: "3.3"
+
+services:
+  db:
+    container_name: ${WEBSITENAME}_db
+    image: mysql:5.7
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+      - ./mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      MYSQL_DATABASE: ${DBNAME}
+      MYSQL_USER: ${DBNAME}
+      MYSQL_PASSWORD: ${PASSWORD}
+    ports:
+      - "3306:3306"
+  pmi:
+    container_name: ${WEBSITENAME}_pmi
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - 8181:80
+    environment:
+      PMA_HOST: ${WEBSITENAME}_db
+      PMA_PORT: 3306
+      PMA_USER: ${DBNAME}
+      PMA_PASSWORD: ${PASSWORD}
+      MYSQL_USER: ${DBNAME}
+      MYSQL_PASSWORD: ${PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+  wp:
+    container_name: ${WEBSITENAME}_wp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # all of this depends on what we version control:
+      - ./bonsai-wp/:/var/www/html
+      #- ./${WEBSITENAME}-wptheme/wp-content/themes:/var/www/html/wp-content/themes
+      #- ./${WEBSITENAME}-wptheme/wp-content/plugins:/var/www/html/wp-content/plugins
+      #- ./${WEBSITENAME}-wptheme/wp-content/uploads:/var/www/html/wp-content/uploads
+    ports:
+      - "${PORT:-8080}:80"
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: ${WEBSITENAME}_db:3306
+      WORDPRESS_DB_NAME: ${DBNAME}
+      WORDPRESS_DB_USER: ${DBNAME}
+      WORDPRESS_DB_PASSWORD: ${PASSWORD}
+      SITE_URL: http://localhost:8080
+      # WORDPRESS_DEBUG: 1
